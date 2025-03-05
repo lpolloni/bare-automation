@@ -5,7 +5,7 @@ read -p "Enter the username (default: deploy): " USER
 USER="${USER:-deploy}"
 read -p "Enter the repository name (default: app): " REPOSITORY
 REPOSITORY="${REPOSITORY:-app}"
-read -p "Enter the project name (default: locadesk): " PROJECT_NAME
+read -p "Enter the project name (default: myAppName): " PROJECT_NAME
 PROJECT_NAME="${PROJECT_NAME:-myAppName}"
 read -p "Enter the environment (default: stg): " ENVIRONMENT
 ENVIRONMENT="${ENVIRONMENT:-stg}"
