@@ -93,6 +93,31 @@ function configure_repository() {
         popd > /dev/null
         log "[SUCCESS] Git repository created at '$DIR.git'"
     fi
+    
+    else
+        log "[TASK] Creating Git Bare repository at '$DIR.git'"
+        sudo mkdir -p "$DIR.git"
+        pushd "$DIR.git" > /dev/null
+        sudo git init --bare > /dev/null
+        
+        # Post-receive content
+        echo "#!/bin/bash" > $DIR.git/hooks/post-receive
+        echo "git --work-tree=$DIR --git-dir=$DIR.git checkout -f" >> $DIR.git/hooks/post-receive
+        
+        # Check docker service
+        echo "if docker compose ls | grep -q ${PROJECT_NAME}; then" >> $DIR.git/hooks/post-receive
+        echo "    docker compose restart" >> $DIR.git/hooks/post-receive
+        echo "else" >> $DIR.git/hooks/post-receive
+        echo "    cd /${PATH_DIR}/${PROJECT_NAME}/${ENVIRONMENT}" >> $DIR.git/hooks/post-receive
+        echo "    docker compose up -d" >> $DIR.git/hooks/post-receive
+        echo "fi" >> $DIR.git/hooks/post-receive
+
+        # Set permissions
+        sudo chmod +x "$DIR.git/hooks/post-receive"
+        sudo chown -R "$USER:$USER" "$DIR.git"
+        popd > /dev/null
+        log "[SUCCESS] Git repository created at '$DIR.git'"
+    fi
 }
 
 # Main execution flow
